@@ -1,17 +1,21 @@
-## 🦜🔗 LLMOps Showcase — LangChain Documentation Helper
+## 🦜🔗 Cloud‑Hosted RAG Pipeline — LangChain + Vertex AI + Cloud Run
 
 <div align="center">
 
-**An end‑to‑end GenAI pipeline: ingestion → vectorstore → RAG backend → Streamlit UI → Cloud Run CI/CD**
+**An end‑to‑end RAG workflow: Ingestion → Retrieval → Streamlit UI → Testing → CI/CD → Cloud Run Hosting**
 
-[![Python](https://img.shields.io/badge/Python-3.13-blue.svg)](https://www.python.org/downloads/)
-[![Tavily](https://img.shields.io/badge/Tavily-🌐-purple.svg)](https://tavily.com/)
-[![VertexAI](https://img.shields.io/badge/Vertex%20AI-🧬-blue.svg)](https://cloud.google.com/vertex-ai)
-[![ChromaDB](https://img.shields.io/badge/ChromaDB-🔵🔴🟡-purple.svg)](https://www.trychroma.com/)
-[![Pinecone](https://img.shields.io/badge/Pinecone-🌲-orange.svg)](https://pinecone.io/)
-[![Gemini](https://img.shields.io/badge/Gemini-🤖-1e3a8a.svg)](https://ai.google.dev/)
-[![LangChain](https://img.shields.io/badge/LangChain-🦜%20%20🔗-green.svg)](https://langchain.com/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-🖥️-FF4B4B.svg)](https://streamlit.io/)
+[![Python](https://img.shields.io/badge/Python-3.13-3776ab.svg)](https://www.python.org/)
+[![Tavily](https://img.shields.io/badge/Tavily-🌐-f64f00.svg)](https://tavily.com/)
+[![VertexAI](https://img.shields.io/badge/Vertex%20AI-🧬-gold.svg)](https://cloud.google.com/vertex-ai)
+[![ChromaDB](https://img.shields.io/badge/ChromaDB-🔵🔴🟡-green.svg)](https://www.trychroma.com/)
+[![Pinecone](https://img.shields.io/badge/Pinecone-🌲-c30f16.svg)](https://pinecone.io/)
+[![Gemini](https://img.shields.io/badge/Gemini-🤖-indigo.svg)](https://ai.google.dev/)
+[![LangChain](https://img.shields.io/badge/LangChain-🦜%20%20🔗-forest.svg)](https://langchain.com/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-🖥️-ec5800.svg)](https://streamlit.io/)
+[![Ruff](https://img.shields.io/badge/Ruff-🐕-darkblue.svg)](https://docs.astral.sh/ruff/)
+[![Pytest](https://img.shields.io/badge/Pytest-🧪-red.svg)](https://docs.pytest.org/)
+[![Docker](https://img.shields.io/badge/Docker-🐳-cc3336.svg)](https://www.docker.com/)
+[![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-🔄-ff4b33.svg)](https://github.com/features/actions)
 [![CloudRun](https://img.shields.io/badge/Cloud%20Run-☁️-blue.svg)](https://cloud.google.com/run)
 
 </div>
@@ -23,26 +27,25 @@
   <summary><strong>Expand to view contents</strong></summary>
 <br>
 
-- [🦜 LLMOps Showcase — LangChain Documentation Helper](#-llmops-showcase--langchain-documentation-helper)
-- [📚 0. Table of Contents](#-0-table-of-contents)
 - [🎯 1. Project Overview](#-1-project-overview)
 - [🚀 2. Quick Start \& UI Usage](#-2-quick-start--ui-usage)
   - [2.1 Quick Start (Using the Pre‑built `chroma_db/`)](#21-quick-start-using-the-prebuilt-chroma_db)
   - [2.2 Streamlit UI Usage](#22-streamlit-ui-usage)
   - [2.3 Optional: Try the Cloud‑Hosted Version (If Available)](#23-optional-try-the-cloudhosted-version-if-available)
 - [📁 3. Repository Structure](#-3-repository-structure)
-- [🧩 4. Architecture](#-4-architecture)
+- [🏗️ 4. Architecture](#️-4-architecture)
   - [4.1 Project Structure (Modules \& System Flow)](#41-project-structure-modules--system-flow)
   - [4.2 Application Flow (Runtime Interaction)](#42-application-flow-runtime-interaction)
 - [🔎 5. Logging](#-5-logging)
-- [🔐 6. Credentials \& Environment Variables](#-6-credentials--environment-variables)
+- [🔐 6. Service Accounts, Credentials \& Environment Variables](#-6-service-accounts-credentials--environment-variables)
+  - [6.1 Service Accounts](#61-service-accounts)
+  - [6.2 Credentials \& Environment Variables](#62-credentials--environment-variables)
 - [🛠️ 7. Development](#️-7-development)
 - [🧪 8. Testing](#-8-testing)
 - [☁️ 9. Deployment](#️-9-deployment)
-  - [9.1 CI/CD with GitHub Actions](#91-cicd-with-github-actions)
-  - [9.2 Cloud Run Service Account Permissions](#92-cloud-run-service-account-permissions)
-  - [9.3 Accessing the Deployed Application](#93-accessing-the-deployed-application)
-- [🔮 10. Future Work](#-10-future-work)
+  - [9.1 GitHub Actions CI/CD Pipeline](#91-github-actions-cicd-pipeline)
+  - [9.2 Accessing the Deployed Application](#92-accessing-the-deployed-application)
+- [🔮 10. Opportunities for Enhancement](#-10-opportunities-for-enhancement)
 
 </details>
 
@@ -50,14 +53,25 @@
 
 ## 🎯 1. Project Overview
 
-The **LangChain Documentation Helper** is a fully‑engineered Retrieval‑Augmented Generation (RAG) application that functions as a *slim, self‑hosted version of* [chat.langchain.com](https://chat.langchain.com/).  
-It provides accurate, source‑grounded answers to questions about LangChain documentation through a deterministic LCEL‑based RAG pipeline, supported by a clean modular architecture and modern GenAI engineering practices.
+The **LangChain Documentation Helper** is a practical, end‑to‑end implementation of a **classical Retrieval‑Augmented Generation (RAG) pipeline**, designed as a *slim, self‑hosted version of* [chat.langchain.com](https://chat.langchain.com/).
 
-The system demonstrates the complete lifecycle of a production‑ready GenAI application:  
-from **web crawling and documentation ingestion**—specifically targeting the official [LangChain Python documentation](https://docs.langchain.com/oss/python/langchain/overview) as the knowledge source, to **embedding and vectorstore construction**, to **retrieval‑augmented reasoning**, and finally to an interactive **Streamlit chat interface**.  
-The project further showcases practical operational concerns such as **logging**, **testing**, **containerization**, and **automated deployment** to **Google Cloud Run** via CI/CD.
+It provides source‑grounded answers to questions about the official [LangChain Python documentation](https://docs.langchain.com/oss/python/langchain/overview), delivered through a clean, modular LCEL‑based RAG workflow.
 
-Overall, this repository is designed to illustrate how a real‑world GenAI application can be built, structured, deployed, and maintained—highlighting clarity, observability, and end‑to‑end engineering discipline.
+This project focuses on the essential engineering steps behind building and deploying a traditional RAG system. It covers the full lifecycle—from **document ingestion and embedding**, to **vectorstore construction**, to **retrieval‑augmented reasoning**, and finally to a **Streamlit‑based chat interface**. The repository also includes practical operational components such as **logging**, **testing**, **containerization**, and **automated deployment** to **Google Cloud Run**.
+
+The goal is to offer a clear, reproducible reference for engineers who want to understand how a standard LangChain‑based RAG pipeline is developed and delivered in a production‑style environment, without introducing unnecessary complexity or advanced orchestration layers.
+
+### Why this matters for industry
+
+Even as agentic AI and multi‑step orchestration frameworks gain traction, **classical RAG pipelines remain foundational in enterprise GenAI systems**. Organizations continue to rely on solutions that are:
+
+- **Source‑grounded** — ensuring answers are tied to verifiable documentation  
+- **Deployable** — packaged in containers and runnable on cloud platforms  
+- **Maintainable** — structured with clear modules and predictable behavior  
+- **Reproducible** — with ingestion, retrieval, and UI components that can be rebuilt end‑to‑end  
+
+This repository demonstrates these fundamentals in a clean, approachable way.  
+It serves as a practical blueprint for teams building their first RAG application, and for engineers seeking to understand the engineering lifecycle behind a deployable, source‑grounded GenAI service.
 
 ### Tech Stack
 
@@ -65,6 +79,7 @@ Overall, this repository is designed to illustrate how a real‑world GenAI appl
 
 | Component | Technology | Description |
 |-----------|------------|-------------|
+| 🐍 **Programming** | Python | Version 3.13 used — AI and full-stack development|
 | 🌐 **Web Crawling** | Tavily | Performs targeted web search and documentation retrieval |
 | 🧬 **Embeddings** | Vertex AI Embeddings | Generates high‑dimensional vector representations of text |
 | 🧊 **Vector Database** | Chroma / Pinecone | Stores and retrieves embeddings for similarity‑based search |
@@ -90,8 +105,8 @@ This allows you to launch the Streamlit UI immediately without running the inges
 #### **Step 1 — Clone the repository**
 
 ```bash
-git clone https://github.com/kpma1120/llmops-e2e-langchain.git
-cd llmops-e2e-langchain
+git clone https://github.com/kpma1120/langchain-rag-e2e.git
+cd langchain-rag-e2e
 ```
 
 The repository already includes:
@@ -102,16 +117,10 @@ The repository already includes:
 
 #### **Step 2 — Create a Google Cloud service account**
 
-In the Google Cloud Console, create a new service account and grant it the required IAM roles as shown below.
+A Google Cloud service account is required for local development and for authenticating calls to Vertex AI.  
+Create the account and download its JSON key, then place it under `credentials/` (e.g., `credentials/service-account.json`).
 
-<div align="center">
-  <img src="screenshots/service-account-1_permissions_config.jpg" alt="Service Account Permissions" width="700">
-  <p><em>Service account configured with required IAM roles</em></p>
-</div>
-
-After creating the service account, generate a key and download the JSON credentials file.  
-Place it under the `credentials/` directory (e.g., `credentials/service-account.json`).  
-This file will be referenced through the `GOOGLE_APPLICATION_CREDENTIALS` environment variable.
+For a full breakdown of the required roles and the purpose of the custom service account used during local development, see **6.1 Service Accounts**.
 
 #### **Step 3 — Prepare environment variables**
 
@@ -206,7 +215,7 @@ This endpoint allows you to experience the final deployed version without runnin
 
 ## 📁 3. Repository Structure
 ```
-llmops-e2e-langchain/
+langchain-rag-e2e/
 ├── .github/workflows/       # GitHub Actions CI/CD configuration
 │   └── deploy.yml
 ├── .streamlit/              # Streamlit UI theme configuration
@@ -233,11 +242,11 @@ llmops-e2e-langchain/
 
 <br>
 
-## 🧩 4. Architecture
+## 🏗️ 4. Architecture
 
 ### 4.1 Project Structure (Modules & System Flow)
 
-The diagram below illustrates the abstract end‑to‑end pipeline — from ingestion to cloud deployment — together with the concrete modules that implement each stage.
+The diagram below illustrates the abstract end‑to‑end pipeline — from ingestion to cloud deployment — together with the concrete Python modules and configs that implement each stage.
 
 ```mermaid
 flowchart LR
@@ -248,7 +257,7 @@ flowchart LR
         --> BACKEND[Backend<br/>Gemini chat model + LangChain RAG]
         --> FRONTEND[Frontend App<br/>Streamlit]
         --> TESTING[Testing<br/>ruff + pytest]
-        --> DOCKER[Containerization<br/>Docker]
+        --> CONTAINERIZATION[Containerization<br/>Docker]
         --> CICD[CI/CD<br/>GitHub Actions]
         --> CLOUD[Cloud Serverless Container<br/>Google Cloud Run]
 
@@ -258,6 +267,7 @@ flowchart LR
     subgraph Ingestion_Layer
         ING[ingestion.py]
         VS[vectorstore.py]
+        CHROMA[chroma_db/]
         VS --> ING
     end
 
@@ -268,6 +278,7 @@ flowchart LR
 
     subgraph Frontend_Layer
         APP[app.py]
+        FRONTEND_CONFIG[.streamlit/config.toml]
         BE --> APP
     end
 
@@ -279,7 +290,18 @@ flowchart LR
 
     subgraph Testing_Layer
         TEST[test.py]
+        TEST_CONFIG[pyproject.toml]
         BE --> TEST
+    end
+
+    subgraph Containerization_Layer
+        DOCKERFILE[Dockerfile]
+        DOCKERIGNORE[.dockerignore]
+        DOCKERCOMPOSE[docker-compose.yml]
+    end
+
+    subgraph CICD_Layer
+        DEPLOY[.github/workflows/<br/>deploy.yml]
     end
 
     %% Connect layers to high-level pipeline
@@ -287,26 +309,33 @@ flowchart LR
     BACKEND -. maps to .-> BE
     FRONTEND -. maps to .-> APP
     TESTING -. maps to .-> TEST
+    CONTAINERIZATION -. maps to .-> DOCKERFILE
+    CICD -. maps to .-> DEPLOY
     %% Logging is intentionally NOT part of main pipeline
     LOGGING -. maps to .-> LOG
 ```
 
 ### Key idea  
-A two‑layer view:  
-- **Top layer** shows the conceptual pipeline:
+A two‑layer view keeps the architecture both intuitive and implementation‑aligned:  
+
+- **Top layer** shows the conceptual pipeline:  
 ```
-Ingestion → Backend → Frontend → Testing → Docker → CI/CD → Cloud
+Ingestion → RAG Backend → Frontend → Testing → Containerization → CI/CD → Cloud
 ```
-- **Bottom layer** maps each stage to the actual Python modules in this repository:
+
+- **Bottom layer** maps each stage to the actual modules and configs in this repository:  
 ```
-logger → ingestion
-logger → vectorstore
-vectorstore → ingestion
-vectorstore → backend
-backend → app
-backend → test
+Ingestion: ingestion.py + vectorstore.py (with prebuilt chroma_db/ for quick start)
+Backend: backend.py (retrieval + LLM orchestration)
+Frontend: app.py + .streamlit/config.toml (Streamlit UI and theme)
+Logging: logger.py (cross‑cutting utilities)
+Testing: test.py + pyproject.toml (pytest, Ruff, coverage setup)
+Containerization: Dockerfile, .dockerignore, docker-compose.yml (local and cloud builds)
+CI/CD: .github/workflows/deploy.yml (GitHub Actions pipeline)
+Cloud: Google Cloud Run (final runtime environment deployed via gcloud run as defined in deploy.yml)
 ```
-This keeps the architecture both intuitive and implementation‑aligned.
+
+This representation ties the high‑level pipeline directly to its concrete implementation, highlighting how code, configs, and infrastructure work together to deliver the end‑to‑end GenAI RAG system.  
 
 ---
 
@@ -365,17 +394,60 @@ All styling is implemented using ANSI escape codes defined in the `Colors` class
 
 <br>
 
-## 🔐 6. Credentials & Environment Variables
+## 🔐 6. Service Accounts, Credentials & Environment Variables
 
-The project separates configuration into two environments:
+### 6.1 Service Accounts  
 
-- **Local development** — values loaded from `.env` and service account files under `credentials/`
-- **CI/CD** — values injected through **GitHub Actions Secrets**, never stored in the repository
+This project uses two Google Cloud service accounts, each serving a distinct purpose across **local development** and **Cloud Run deployment**.  
+Separating these accounts ensures clear responsibility boundaries and secure execution in both environments.
 
-Both environments use the same variable names, but the source of truth differs depending on where the application runs.
+#### 1. Custom Service Account  
+- **Actual name in this project**: `genai-llmops-repo1@genai-llmops-repo1.iam.gserviceaccount.com`  
+- **General format**: `{service_account_name}@{project_id}.iam.gserviceaccount.com`  
+- **Purpose**:  
+  This account is manually created and used exclusively for **local development**, providing authenticated access to Vertex AI and other GCP resources when running the ingestion pipeline or backend locally.  
+  The downloaded JSON key (`credentials/service-account.json`) is referenced through the `GOOGLE_APPLICATION_CREDENTIALS` environment variable.  
+- **Permissions**:  
+  The account is granted the necessary IAM roles to call Vertex AI APIs and access required GCP services during local runs. These permissions enable embedding generation, LLM calls, and any other GCP‑authenticated operations performed by the ingestion or backend modules.
 
-| Variable / Secret | Local (.env) | CI/CD (Secrets) | Purpose |
-|-------------------|--------------|--------------------------|---------|
+<div align="center">
+  <img src="screenshots/service-account-1_permissions_config.jpg" alt="Custom service account permissions configuration" width="700">
+  <p><em>Custom service account configured with required IAM roles</em></p>
+</div>  
+
+#### 2. Default Compute Engine Service Account  
+- **Actual name in this project**: `668245685616-compute@developer.gserviceaccount.com`  
+- **General format**: `{project_number}-compute@developer.gserviceaccount.com`  
+- **Purpose**:  
+  This is the automatically generated service account used by **Cloud Run** to execute the deployed container.  
+  It authenticates backend calls made from the cloud environment, particularly requests to Vertex AI during RAG inference.  
+- **Permissions**:  
+  The account is assigned the **Vertex AI User** role (`roles/aiplatform.user`), enabling the Cloud Run service to perform model inference and embedding operations securely at runtime.
+
+<div align="center">
+  <img src="screenshots/service-account-2_permissions_config.jpg" alt="Default Compute Engine service account permissions configuration" width="700">
+  <p><em>Cloud Run service account configured with the required Vertex AI permissions</em></p>
+</div>  
+
+---
+
+### 6.2 Credentials & Environment Variables  
+
+Configuration is split between **local development** and **CI/CD deployment**, with sensitive values injected securely at runtime.
+
+#### Local Development  
+- Environment variables are loaded from `.env` (see `.env.example`).  
+- The file `credentials/service-account.json`—downloaded from the custom service account—is required for local ingestion and backend execution, enabling authenticated access to Vertex AI and other GCP services.  
+- This file is used **only locally** and is never committed to the repository.
+
+#### CI/CD Deployment  
+- Secrets are injected via **GitHub Actions** in `deploy.yml`.  
+- These include the base64‑encoded service account key, project identifiers, and vectorstore configuration values used throughout both the testing workflow and the Cloud Run deployment process.
+- No credentials are stored in the repository; all sensitive values are provided dynamically at runtime.
+
+#### Variable Mapping  
+| Variable / Secret | Local (.env / credentials) | CI/CD (Secrets) | Purpose |
+|-------------------|-----------------------------|-----------------|---------|
 | **GOOGLE_APPLICATION_CREDENTIALS** | ✔️ Yes | ❌ No | Path to local Google Cloud service account JSON. |
 | **GCP_SA_KEY** | ❌ No | ✔️ Yes | Base64‑encoded Google Cloud service account JSON for CI/CD authentication. |
 | **GCP_PROJECT_ID** | ❌ No | ✔️ Yes | Google Cloud project ID for Artifact Registry & Cloud Run. |
@@ -384,6 +456,9 @@ Both environments use the same variable names, but the source of truth differs d
 | **PINECONE_API_KEY** | ✔️ Yes | ✔️ Yes | Pinecone API key for vectorstore operations. |
 | **PINECONE_INDEX_NAME** | ✔️ Yes | ✔️ Yes | Pinecone index name (only used when provider = pinecone). |
 | **CHROMA_PERSIST_DIR** | ✔️ Yes | ✔️ Yes | Directory for ChromaDB persistence (local or CI tests). |
+
+#### Key idea  
+Local runs rely on `.env` and a downloaded service account file, while CI/CD pipelines use GitHub Secrets to inject credentials securely. This separation ensures reproducibility for developers and safe automation for deployment.
 
 <br>
 
@@ -463,15 +538,14 @@ The same lint and test steps run automatically in GitHub Actions, ensuring consi
 
 ## ☁️ 9. Deployment
 
-Deployment covers two parts: running the containerized application locally using Docker (see Step 4 and Step 5 in 2.1 Quick Start), and deploying it automatically through GitHub Actions to Google Cloud Run.
+### 9.1 GitHub Actions CI/CD Pipeline
 
-### 9.1 CI/CD with GitHub Actions
+Automated deployment is handled by **GitHub Actions** through the workflow file `deploy.yml`.  
+The pipeline consists of three sequential jobs that validate code quality, run tests, and deploy the latest version of the application to **Google Cloud Run**:
 
-Automated deployment is handled by `deploy.yml`, which uses GitHub Actions Secrets (see Section 6) and runs three jobs:
-
-- **lint** — runs Ruff checks  
-- **test** — runs pytest with coverage and exports `test-results/junit.xml` as a downloadable artifact  
-- **build-and-deploy** — builds the Docker image, pushes it to Artifact Registry, and deploys it to Cloud Run
+- **lint** — executes Ruff checks for code quality  
+- **test** — runs pytest with coverage and uploads `test-results/junit.xml` as an artifact  
+- **build-and-deploy** — builds the Docker image, pushes it to Artifact Registry, and deploys the updated container to Cloud Run  
 
 <div align="center">
   <img src="screenshots/github-actions_cicd_success.jpg" alt="Github Actions CI/CD" width="700">
@@ -479,6 +553,9 @@ Automated deployment is handled by `deploy.yml`, which uses GitHub Actions Secre
 </div>
 
 The **test-results** artifact can be downloaded directly from the workflow run for inspection.
+
+Cloud Run requires appropriate permissions to invoke Vertex AI during inference.  
+These permissions are granted to the **default Compute Engine service account**, as described in **6.1 Service Accounts**, ensuring that the deployed container can securely perform embedding generation and LLM calls at runtime.
 
 After deployment, Cloud Run hosts the latest version of the application:
 
@@ -489,20 +566,7 @@ After deployment, Cloud Run hosts the latest version of the application:
 
 ---
 
-### 9.2 Cloud Run Service Account Permissions
-
-Cloud Run uses a default compute service account (typically  
-`{project_number}-compute@developer.gserviceaccount.com`).  
-To enable backend calls to Vertex AI, grant this service account the **Vertex AI User** role (`roles/aiplatform.user`).
-
-<div align="center">
-  <img src="screenshots/service-account-2_permissions_config.jpg" alt="Service Account Permissions" width="700">
-  <p><em>Cloud Run service account configured with the required Vertex AI permissions</em></p>
-</div>
-
----
-
-### 9.3 Accessing the Deployed Application
+### 9.2 Accessing the Deployed Application
 
 After deployment, Cloud Run exposes a public URL in the format:
 
@@ -517,15 +581,23 @@ https://llm-app-668245685616.us-east1.run.app
 ```
 
 Open the URL to confirm the Streamlit application is running successfully.  
-This completes the full workflow from ingestion → backend → UI → CI/CD → Cloud Run.
+This completes the full cloud‑hosted RAG pipeline:  
+**Ingestion → RAG backend → Streamlit UI → Testing → CI/CD → Cloud Run**
 
 <br>
 
-## 🔮 10. Future Work
+## 🔮 10. Opportunities for Enhancement
 
-Planned enhancements focus on improving observability, developer experience, and the overall quality of the RAG pipeline.
+Potential enhancements highlight ways to strengthen observability, developer experience, and the overall robustness of the end‑to‑end RAG pipeline.
 
-- **Monitoring Enhancements** — Integrate Evidently AI for data drift, embedding drift, and model performance monitoring.  
-- **Logging Improvements** — Explore `loguru` + `structlog` for structured, production‑grade logging.  
-- **Retrieval Transparency** — Improve visibility into retrieved chunks to help users understand how answers are formed.  
-- **Tracing Enhancements** — Add LangSmith tracing for end‑to‑end request inspection and pipeline debugging.
+- **End‑to‑End Tracing & Observability (`LangSmith` / `LangFuse` / `OpenTelemetry`)**  
+  Strengthen the system’s observability by adding a unified tracing layer that captures ingestion steps, retrieval behavior, LLM calls, and final outputs. This can be achieved by integrating tools such as **LangSmith**, **LangFuse**, or **OpenTelemetry** to provide structured traces and request‑level visibility. Enhanced tracing would make it easier to diagnose bottlenecks, assess retrieval quality, and ensure the overall reliability of the end‑to‑end RAG workflow.
+
+- **Enhanced Monitoring & Drift Detection (`Evidently AI` / `Phoenix` / `WhyLabs` / `OpenTelemetry`)**  
+  Strengthen the monitoring layer by incorporating tools such as **Evidently AI**, **Arize Phoenix**, **WhyLabs**, or **OpenTelemetry**‑based metrics to track data drift, embedding drift, and model‑level behavior. These monitoring capabilities would complement the existing logging setup with structured reports and anomaly detection, making it easier to identify degradation in retrieval quality or shifts in the underlying data distribution over time.
+
+- **Improved Retrieval Transparency**  
+  Extend the current “sources only” display by surfacing short context snippets alongside each cited document in the Streamlit UI. Showing the exact text chunks that were retrieved—and used to ground the answer—would make the RAG behavior more interpretable for users and provide a clearer basis for evaluating whether the retrieved context is appropriate and sufficient.
+
+- **Structured Logging with `loguru` + `structlog`**  
+  Replace the lightweight ANSI‑styled logger with a structured logging stack — **loguru** and **structlog** to support richer context, JSON output, and easier downstream analysis. This would improve debuggability during ingestion and retrieval, and make logs more suitable for centralized log aggregation in cloud environments.
